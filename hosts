@@ -1,0 +1,3 @@
+[all]
+app1 ansible_ssh_port=22
+app2 ansible_ssh_port=22

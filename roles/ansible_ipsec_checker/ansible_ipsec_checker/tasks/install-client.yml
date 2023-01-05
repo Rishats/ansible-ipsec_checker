@@ -1,0 +1,57 @@
+---
+- name: Compose the ipsec_checker client download base url
+  set_fact:
+    _ipsec_checker_client_download_base_url: "https://github.com/Rishats/ipsec_checker/releases/download/latest/ipsec_checker_linux_{{ go_arch }}"
+
+- name: Compose the ipsec_checker client download url with lastest release
+  set_fact:
+    _ipsec_checker_client_download_url: "{{ _ipsec_checker_client_download_base_url }}"
+  when: ipsec_checker_client_release | length == 0
+
+- name: "Compose the ipsec_checker client download url with release {{ ipsec_checker_client_release }}"
+  set_fact:
+    _ipsec_checker_client_download_url: "https://github.com/Rishats/ipsec_checker/releases/download/{{ ipsec_checker_client_release }}/ipsec_checker_linux_{{ go_arch }}"
+  when: ipsec_checker_client_release | length > 0
+
+- name: Download the ipsec_checker client
+  get_url:
+    url: "{{ _ipsec_checker_client_download_url }}"
+    dest: "{{ ipsec_checker_client_bin }}/ipsec_checker"
+    owner: "root"
+    group: "root"
+    mode: 0755
+  register: _download_client
+  until: _download_client is succeeded
+  retries: 5
+  delay: 2
+
+- name: Make sure destination dir for .env exists
+  file:
+    path: "{{ ipsec_checker_envdir }}"
+    state: directory
+
+- name: Generate the ipsec_checker server envfile
+  template:
+    src: ipsec_checker.env.j2
+    dest: "{{ ipsec_checker_envdir }}/.env"
+    owner: "root"
+    group: "{{ ipsec_checker_group }}"
+    mode: 0640
+  notify: restart ipsec_checker
+
+- name: Create the ipsec_checker server systemd config
+  template:
+    src: ipsec_checker.service.j2
+    dest: "/etc/systemd/system/ipsec_checker.service"
+    owner: "root"
+    group: "root"
+  when: ansible_service_mgr == "systemd"
+  notify:
+    - reload ipsec_checker systemd
+    - restart ipsec_checker
+
+- name: Enable and start the ipsec_checker service
+  service:
+    name: ipsec_checker
+    state: started
+    enabled: true

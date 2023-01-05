@@ -1,0 +1,11 @@
+---
+
+- name: reload ipsec_checker systemd
+  systemd:
+    name: ipsec_checker
+    daemon_reload: True
+
+- name: restart ipsec_checker
+  service:
+    name: ipsec_checker
+    state: restarted

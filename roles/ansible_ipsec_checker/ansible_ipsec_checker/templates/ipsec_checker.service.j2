@@ -1,0 +1,38 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=ipsec_checker - agent for IPSec tunnel which check and restart connection if ping failed.
+Documentation=https://github.com/Rishats/ipsec_checker
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/usr/local/
+
+User={{ ipsec_checker_user }}
+Group={{ ipsec_checker_group }}
+
+PermissionsStartOnly=true
+
+EnvironmentFile={{ ipsec_checker_envdir }}/.env
+
+ExecStart={{ ipsec_checker_client_bin }}/ipsec_checker
+
+# Let systemd always restart this service, in limits defined by StartLimitIntervalSec and StartLimitBurst.
+Restart=always
+
+StandardOutput=journal
+StandardError=inherit
+
+# Disable timeout logic and wait until process is stopped
+TimeoutStopSec=0
+
+# SIGTERM signal is used to stop ipsec_checker
+KillSignal=SIGTERM
+
+SendSIGKILL=no
+
+SuccessExitStatus=0
+
+[Install]
+WantedBy=multi-user.target

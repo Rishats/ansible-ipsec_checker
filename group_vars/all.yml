@@ -1,0 +1,23 @@
+---
+# ipsec_checker binaries path
+ipsec_checker_client_bin: /usr/local/bin
+
+ipsec_checker_app_env: "production"
+ipsec_checker_integram_webhook_uri: "https://integram.org/webhook/cdgdw68sIpR"
+ipsec_checker_ip_list: "127.0.0.1,8.8.8.8"
+ipsec_checker_sentry_dsn: "your-dsn"
+
+# How many retry ping before restart IPSEC service
+ipsec_checker_probe: "3"
+
+# ipsec_checker release to install. default if latest
+ipsec_checker_client_release: ""
+
+# Runtime user and group for the ipsec_checker service
+ipsec_checker_user: root
+ipsec_checker_group: root
+
+# Path to the file containing the ENV variables for the ipsec_checker server
+ipsec_checker_envdir: /usr/local/etc/ipsec_checker
+
+ipsec_checker_server_env_extra: ""
