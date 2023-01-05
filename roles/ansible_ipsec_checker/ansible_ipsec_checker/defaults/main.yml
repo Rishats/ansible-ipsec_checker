@@ -10,6 +10,9 @@ ipsec_checker_sentry_dsn: "your-dsn"
 # How many retry ping before restart IPSEC service
 ipsec_checker_probe: "3"
 
+# How many seconds wait until new ping proccess start
+ipsec_checker_sleep: "10"
+
 # ipsec_checker release to install. default if latest
 ipsec_checker_client_release: ""
 
